@@ -1,1 +1,2 @@
-print("kk")
+import sys
+print(sys.executable)
