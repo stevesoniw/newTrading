@@ -69,8 +69,11 @@
 								</form>
 							
 								{% if plot_html %}
-									<div>{{ plot_html|safe }}</div>
+									<div>{{ plot_html|safe }}</div><br />
 								{% endif %}							
+								{% if interest_plot_html %}
+									<div>{{ interest_plot_html|safe }}</div><br />
+								{% endif %}															
 
 							<footer>
 								<a href="#portfolio" class="button scrolly">Magna Aliquam</a>

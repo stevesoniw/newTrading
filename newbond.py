@@ -13,6 +13,7 @@ from datetime import date, datetime, timedelta
 #금융관련 APIs
 import finnhub
 import fredpy as fp
+from fredapi import Fred
 import yfinance as yf
 from openai import OpenAI
 #config 파일
@@ -31,12 +32,28 @@ app.mount("/static", StaticFiles(directory="myHtml"), name="static")
 
 # Fred API KEY 설정
 fp.api_key =config.FRED_API_KEY
+fred = Fred(api_key=config.FRED_API_KEY)
 
 # 기준금리 데이터를 가져오는 함수
 def get_base_rate(start_date, end_date):
     df1 = fp.series('FEDFUNDS', end_date)
     data = df1.data.loc[(df1.data.index>=start_date) & (df1.data.index<=end_date)]
     return data
+
+# 미국채 이자율 데이터를 가져와 보여주는 함수
+def create_interest_rate_chart():
+    rate_10Y = fred.get_series('DGS10')
+    rate_2Y  = fred.get_series('DGS2')
+    #rate_3M  = fred.get_series('DGS3M')
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatter(x=rate_10Y.index, y=rate_10Y.values, mode='lines', name='10Y'))
+    fig.add_trace(go.Scatter(x=rate_2Y.index,  y=rate_2Y.values,  mode='lines', name='2Y'))
+#   fig.add_trace(go.Scatter(x=rate_3M.index,  y=rate_3M.values,  mode='lines', name='3M'))
+    
+    fig.update_layout(title='미국 국채 이자율', xaxis_title='날짜', yaxis_title='이자율(%)')
+    interest_plot_html = fig.to_html(full_html=False)    
+    return interest_plot_html
 
 # 루트 경로에 대한 GET 요청 처리
 @app.get("/", response_class=HTMLResponse)
@@ -48,8 +65,9 @@ async def read_root(request: Request):
 @app.post("/submit", response_class=HTMLResponse)
 async def submit(request: Request):
     plot_html = show_base_rate()
+    interest_plot_html = create_interest_rate_chart()
     # 결과 페이지에 차트 HTML 포함하여 반환
-    return templates.TemplateResponse("index.html", {"request": request, "plot_html": plot_html})
+    return templates.TemplateResponse("index.html", {"request": request, "plot_html": plot_html, "interest_plot_html" :interest_plot_html})
 
 def show_base_rate():
     start_date = '2000-01-01'
