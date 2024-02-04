@@ -5,77 +5,24 @@ import random
 import finnhub
 # import datasets
 import pandas as pd
-import fredpy as fp
-from datetime import datetime
 import numpy as np 
 import yfinance as yf
 from datetime import date, datetime, timedelta
 import matplotlib.pyplot as plt
-import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 from openai import OpenAI
 
-#FAST API 이용하도록 변경
-from fastapi import FastAPI, Form, Request
-from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
 
-app = FastAPI()
-
-# 정적 파일과 템플릿을 제공하기 위한 설정
-templates = Jinja2Templates(directory="myHtml")
-app.mount("/static", StaticFiles(directory="myHtml"), name="static")
-
-
-# Fred API KEY 설정
-fp.api_key = "88dd48462ba4a447b233565713a567aa"
-
-# 기준금리 데이터를 가져오는 함수
-def get_base_rate(start_date, end_date):
-    df1 = fp.series('FEDFUNDS', end_date)
-    data = df1.data.loc[(df1.data.index>=start_date) & (df1.data.index<=end_date)]
-    return data
-
-# 루트 경로에 대한 GET 요청 처리
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    # 초기 페이지 렌더링. plot_html 변수가 없으므로 비워둡니다.
-    return templates.TemplateResponse("index.html", {"request": request, "plot_html": None})
-
-
-@app.post("/submit", response_class=HTMLResponse)
-async def submit(request: Request):
-    plot_html = show_base_rate()
-    # 결과 페이지에 차트 HTML 포함하여 반환
-    return templates.TemplateResponse("index.html", {"request": request, "plot_html": plot_html})
-
-def show_base_rate():
-    start_date = '2000-01-01'
-    end_date = '2023-02-01'
-
-    # 데이터 가져오기
-    data = get_base_rate(start_date, end_date)
-
-    # 데이터 시각화
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=data.index, y=data.values, name='기준금리'))
-    fig.update_layout(title_text='미국 금리 변동 추이', title_x=0.5)
-    # Plotly 차트를 HTML로 변환
-    plot_html = fig.to_html(full_html=False)
-    return plot_html
-
-#finnhub_client = finnhub.Client(api_key=st.secrets["FINNHUB_KEY"])
-#client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
-
-'''st.title('AI가 말해주는 주식 정보 (해외)')
+st.title('AI가 말해주는 주식 정보 (해외)')
 st.subheader("by AI")
 
 st.write("")
 
 ticker = st.text_input('주식 심볼을 입력하세요 (예: AAPL)', 'AAPL')
 
+
+
+finnhub_client = finnhub.Client(api_key=st.secrets["FINNHUB_KEY"])
+client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
 
 
 
@@ -295,7 +242,6 @@ def get_one_year_before(end_date):
   end_date = datetime.strptime(end_date, "%Y-%m-%d")
   one_year_before = end_date - timedelta(days=365)
   return one_year_before.strftime("%Y-%m-%d")
-
 def get_stock_data_daily(symbol):
   EndDate = get_curday()
   StartDate = get_one_year_before(EndDate)
@@ -319,29 +265,10 @@ def get_stock_data_fig (ticker):
 
     return fig 
     
-'''
 
-'''if st.button("실행하기"):
-    
-    #기준금리 보여주기
-    with st.status("Process Bond data... ", expanded=True) as status :    
-        st.write('\n :sunglasses: 미국 기준 금리 데이터 나갑니다.. ')
-        # Streamlit에서 날짜 선택
-        start_date = '2000-01-01'
-        end_date = '2023-02-01'
 
-        # 데이터 가져오기
-        data = get_base_rate(start_date, end_date)
+if st.button("실행하기"):
 
-        # 데이터 시각화
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=data.index, y=data.values, name='기준금리'))
-        fig.update_layout(title_text='미국 금리 변동 추이', title_x=0.5)
-
-        # Streamlit에 플롯 보여주기
-        st.plotly_chart(fig)
-        status.update(label="Processing completed!!")
-        
     with st.status("Processing data...", expanded=True) as status :                
         fig1 = get_historical_eps(ticker)
         fig2 = get_recommend_trend(ticker)
@@ -372,10 +299,8 @@ def get_stock_data_fig (ticker):
         st.write('\n :sunglasses: 최근 1년 주가 흐름과 거래량 추이를 참조하세요. ')
         fig3= get_stock_data_fig (ticker)
         st.pyplot(fig3)
-        status.update(label="Processing completed!!")'''
+        status.update(label="Processing completed!!")
 
 
 
             
-
-
