@@ -2,20 +2,21 @@ import streamlit as st
 import time
 import json
 import random
-import finnhub
-# import datasets
+# 기존 함수들
 import pandas as pd
-import fredpy as fp
-from datetime import datetime
 import numpy as np 
-import yfinance as yf
-from datetime import date, datetime, timedelta
 import matplotlib.pyplot as plt
 import plotly.express as px
-from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+from datetime import date, datetime, timedelta
+#금융관련 APIs
+import finnhub
+import fredpy as fp
+import yfinance as yf
 from openai import OpenAI
-
+#config 파일
+import config
 #FAST API 이용하도록 변경
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
@@ -28,9 +29,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="myHtml")
 app.mount("/static", StaticFiles(directory="myHtml"), name="static")
 
-
 # Fred API KEY 설정
-fp.api_key = "88dd48462ba4a447b233565713a567aa"
+fp.api_key =config.FRED_API_KEY
 
 # 기준금리 데이터를 가져오는 함수
 def get_base_rate(start_date, end_date):
