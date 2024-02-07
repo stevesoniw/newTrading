@@ -17,14 +17,24 @@
     <script type="text/javascript" src="/static/assets/js/jquery-3.6.4.min.js"></script>
     <script type="text/javascript" src="/static/assets/js/jquery-ui.min.js"></script>
     <script>
+        window.onload = function() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+        };        
         function goRate(){
+            document.getElementById('loadingIndicator').style.display = 'block';
             document.getElementById('rateForm').submit(); // 폼 제출            
         }
+        function goCalendar(){
+            //document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('calendarForm').submit(); // 폼 제출            
+        }        
         </script>    
 </head>
 <body>
     <form id="rateForm" action="/submit" method="post" style="display:none;">
     </form>
+    <form id="calendarForm" action="/calendar" method="post" style="display:none;">
+    </form>    
     <div class="wrap" id="chartPilot">
         <main class="clear">
             <div class="left-area">
@@ -36,6 +46,7 @@
                         <li class="page-menu on" data-tab="menua"><a href="javascript:goRate();" id="submitLink">미국 증시 금리 데이터 보기</a></li>
                         <li class="page-menu" data-tab="menub"><a href="#none">미국증시20년 2</a></li>
                         <li class="page-menu" data-tab="menuc"><a href="#none">미국증시20년 3</a></li>
+                        <li class="page-menu" data-tab="menud"><a href="javascript:goCalendar();" id="submitLink4">증시 캘린더</a></li>
                     </ul>
                 </div>
 
@@ -49,6 +60,7 @@
                     <h3 class="s-tit">해당 그래프에 대한 추가 설명문구 영역</h3>
 
                     <div class="chart-area">
+                        <div id="loadingIndicator" style="display: none;">로딩 중...</div>
                         {{ plot_html|safe }}
                     </div>
 
@@ -95,6 +107,34 @@
                         </ul>
                     </div>
                 </div>
+
+                <div id="menud" class="menu-cont">
+                    <h2 class="s-tit">바보캘린더 3</h2>
+                    <h3 class="s-tit">해당 그래프에 대한 추가 설명문구 영역 3</h3>
+
+                    <div class="chart-area">
+                        {% for event in calendar_data %}
+                        <div class="event" style="border-left: 5px solid #{{ event.hexColor }};">
+                            <div class="title">{{ event.title }}</div>
+                            <div class="details">
+                                <p>Time: {{ event.start }} - {{ event.end }}</p>
+                                <p>Country: {{ event.country }}, Category: {{ event.category }}, Importance: {{ event.importance }}</p>
+                                <p>{{ event.shortDesc }}</p>
+                                <p>{{ event.longDesc }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+
+                    <div class="box-instruction">
+                        <ul class="list-dep">
+                            <li>Chat GPT에서 제공한 답변 영역1</li>
+                            <li>Chat GPT에서 제공한 답변 영역2</li>
+                            <li>Chat GPT에서 제공한 답변 영역3</li>
+                        </ul>
+                    </div>
+                </div>                
             </div>
             <!-- 우측 영역 끝 -->
 

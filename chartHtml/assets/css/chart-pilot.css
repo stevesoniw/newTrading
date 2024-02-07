@@ -38,3 +38,9 @@
 #chartPilot .list-dep li{position:relative;margin-top:7px;padding-left:12px;}
 #chartPilot .list-dep li:first-child{margin-top:0;}
 #chartPilot .list-dep li::before{content:'';position:absolute;left:0;top:9px;width:4px;height:4px;background:#313daa;border-radius:50%;}
+
+/* 캘린더 영역 */
+#chartPilot .event {border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background-color: #f9f9f9;}
+#chartPilot .event .title {color: #F50B01;}
+#chartPilot .event .details {font-size: 14px;}
+

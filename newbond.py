@@ -3,6 +3,7 @@ import time
 import json
 import random
 import requests
+import httpx
 # 기존 함수들
 import pandas as pd
 import numpy as np 
@@ -17,6 +18,7 @@ import fredpy as fp
 from fredapi import Fred
 import yfinance as yf
 from openai import OpenAI
+#내가 작성한 것 
 import fredAll
 #config 파일
 import config
@@ -95,10 +97,14 @@ def fred_test():
     data = fred.search_by_release(release_id=1, limit=0, order_by=None, filter="bonds")
     print(data)    
 
-def rapidapi_test():
-    
-    url = "https://trader-calendar.p.rapidapi.com/api/calendar"
+@app.post("/calendar", response_class=HTMLResponse)
+async def get_calendar(request: Request):
+    calendar_data = await rapidapi_test()
+    return templates.TemplateResponse("chart_pilot.html", {"request": request, "calendar_data": calendar_data})
 
+
+async def rapidapi_test():
+    url = "https://trader-calendar.p.rapidapi.com/api/calendar"
     payload = { "country": "USA" }
     headers = {
 	    "content-type": "application/json",
@@ -106,9 +112,10 @@ def rapidapi_test():
 	    "X-RapidAPI-Host": "trader-calendar.p.rapidapi.com"
     }
 
-    response = requests.post(url, json=payload, headers=headers)
-
-    print(response.json())
+    async with httpx.AsyncClient() as client:
+        response = await client.post(url, json=payload, headers=headers)
+    calendar_data = response.json()
+    return calendar_data
 
 #rapidapi_test()
 
