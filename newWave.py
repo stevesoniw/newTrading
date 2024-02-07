@@ -266,7 +266,6 @@ def get_stock_data_fig (ticker):
     return fig 
     
 
-
 if st.button("실행하기"):
 
     with st.status("Processing data...", expanded=True) as status :                

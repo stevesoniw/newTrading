@@ -1,0 +1,40 @@
+#chartPilot.wrap {width: 100%; height: 100%; position: relative; color: #111;}
+#chartPilot .header{position:relative;width:100%;padding:3px 20px 19px;border-bottom:1px solid #e1e1e1;}
+#chartPilot .header h1{width:147px;height:52px;}
+#chartPilot .header nav.menu{position:absolute;top:0;left:162px;right:0px;margin:18px 140px 0 215px;}
+#chartPilot .header nav.menu .s-menu{float:right;margin-top:13px;}
+#chartPilot .header nav.menu .s-menu ul{overflow:hidden;font-size:14px;color:#333;line-height:13px;}
+#chartPilot .header nav.menu ul li{float:left;margin-left:10px;}
+#chartPilot .header nav.menu ul li:first-child{margin-left:0px;}
+
+#chartPilot main{display:flex;height:100%;}
+
+/* left 메뉴 */
+/* PROMPT */
+.left-area{overflow-y:scroll;position:relative;width:300px;height:100%;background-image:linear-gradient(-20deg, #090832 0%, #061f6a 100%);}
+.left-area::before{content:'';position:absolute;top:0;left:0;width:300px;height:286px;background:url('/static/assets/images/left_bg.png') no-repeat center;opacity:.5;}
+.left-area::-webkit-scrollbar{width:0px;}
+.left-area .title-wrap{overflow:hidden;position:relative;padding:40px 20px;font-size:22px;color:#fff;}
+.left-area span{color:#ffc045;font-weight:500;}
+
+.left-area .menu-wrap{position:relative;padding:0px 20px 0;}
+.left-area .menu-wrap .menu-list li.page-menu{margin-top:20px;}
+.left-area .menu-wrap .menu-list li.page-menu:first-child{margin-top:0;}
+.left-area .menu-wrap .menu-list li.page-menu a{color:#fff;}
+.left-area .menu-wrap .menu-list li.page-menu.on a{color:#fad58c;}
+
+
+/* 우측 영역 */
+#chartPilot .right-area{overflow-y:auto;width:calc(100% - 280px);height:100%;padding:0 50px;}
+#chartPilot .right-area::-webkit-scrollbar{width:0px;}
+#chartPilot .right-area div[id^=menu]{margin:40px 0;}
+#chartPilot .menu-cont{display:none;}
+#chartPilot .menu-cont.on{display:block;}
+#chartPilot h2.s-tit{position:relative;display:inline-block;margin-bottom:24px;font-size:24px;line-height:24px;}
+#chartPilot h2.s-tit::before{content:'';position:absolute;bottom:0px;left:0;width:100%;height:7px;background:#fad58c;z-index:-1;}
+#chartPilot h3.s-tit{margin-bottom:30px;color:#333;font-weight:400;}
+#chartPilot .chart-area{width:100%;height:550px;border:1px solid #ccc;}
+#chartPilot .box-instruction{margin-top:50px;padding:15px;border:1px solid #ccc;}
+#chartPilot .list-dep li{position:relative;margin-top:7px;padding-left:12px;}
+#chartPilot .list-dep li:first-child{margin-top:0;}
+#chartPilot .list-dep li::before{content:'';position:absolute;left:0;top:9px;width:4px;height:4px;background:#313daa;border-radius:50%;}

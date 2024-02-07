@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+<head>
+    <title>Chart-Pilot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+
+    <link href="/static/assets/css/jquery-ui.min.css" rel="stylesheet" type="text/css">
+    <link href="/static/assets/css/newFont.css" rel="stylesheet" type="text/css">
+    <link href="/static/assets/css/common.css" rel="stylesheet" type="text/css">
+    <link href="/static/assets/css/chart-pilot.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/javascript" src="/static/assets/js/jquery-3.6.4.min.js"></script>
+    <script type="text/javascript" src="/static/assets/js/jquery-ui.min.js"></script>
+    <script>
+        function goRate(){
+            document.getElementById('rateForm').submit(); // 폼 제출            
+        }
+        </script>    
+</head>
+<body>
+    <form id="rateForm" action="/submit" method="post" style="display:none;">
+    </form>
+    <div class="wrap" id="chartPilot">
+        <main class="clear">
+            <div class="left-area">
+                <div class="title-wrap">
+                    <span>AI</span> Science팀 <span>Pilot</span>
+                </div>
+                <div class="menu-wrap">
+                    <ul class="menu-list">
+                        <li class="page-menu on" data-tab="menua"><a href="javascript:goRate();" id="submitLink">미국 증시 금리 데이터 보기</a></li>
+                        <li class="page-menu" data-tab="menub"><a href="#none">미국증시20년 2</a></li>
+                        <li class="page-menu" data-tab="menuc"><a href="#none">미국증시20년 3</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <!-- left-nav 끝 -->
+
+            <!-- 우측 영역 시작 -->
+            <div class="right-area">
+                <div id="menua" class="menu-cont on">
+                    <h2 class="s-tit">미국증시20년 1</h2>
+                    <h3 class="s-tit">해당 그래프에 대한 추가 설명문구 영역</h3>
+
+                    <div class="chart-area">
+                        {{ plot_html|safe }}
+                    </div>
+
+                    <div class="box-instruction">
+                        <ul class="list-dep">
+                            <li>2001년: 미국 증시는 도트컴 버블의 붕괴로 인해 급격한 하락세를 보였습니다. 기술주와 인터넷 기업들의 폭망으로 인해 경기 둔화와 불확실성이 발생했습니다.</li>
+                            <li>2002년 - 2007년: 그 이후로 증시는 점진적인 회복을 시작했습니다. 경기 침체의 끝과 함께 회복 신호가 보이면서 주식시장은 점차 상승을 이어갔습니다. 부동산 부문에서의 성장과 함께 경제 상황이 개선되었습니다.</li>
+                            <li>2008년: 금융위기가 발발하면서 증시는 2008년 하락세를 겪게 되었습니다. 서브프라임 모기지 위기로 인한 금융 기관의 파산 우려로 경기 둔화와 대량 해고가 발생했습니다.</li>
+                            <li>2009년 - 2012년: 금융위기 이후 미국 정부의 강력한 경기부양 정책에 의해 증시는 회복을 시작했습니다. 경기 침체를 넘어선 후 점차 상승세를 이어갔으며, QE 정책과 저금리 환경이 이어지면서 주식시장은 안정성을 되찾았습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="menub" class="menu-cont">
+                    <h2 class="s-tit">미국증시20년 2</h2>
+                    <h3 class="s-tit">해당 그래프에 대한 추가 설명문구 영역 2</h3>
+
+                    <div class="chart-area">
+                        차트 영역입니다.
+                    </div>
+
+                    <div class="box-instruction">
+                        <ul class="list-dep">
+                            <li>Chat GPT에서 제공한 답변 영역1</li>
+                            <li>Chat GPT에서 제공한 답변 영역2</li>
+                            <li>Chat GPT에서 제공한 답변 영역3</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div id="menuc" class="menu-cont">
+                    <h2 class="s-tit">미국증시20년 3</h2>
+                    <h3 class="s-tit">해당 그래프에 대한 추가 설명문구 영역 3</h3>
+
+                    <div class="chart-area">
+                        차트 영역입니다.
+                    </div>
+
+                    <div class="box-instruction">
+                        <ul class="list-dep">
+                            <li>Chat GPT에서 제공한 답변 영역1</li>
+                            <li>Chat GPT에서 제공한 답변 영역2</li>
+                            <li>Chat GPT에서 제공한 답변 영역3</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- 우측 영역 끝 -->
+
+        </main>
+
+    </div>
+    <!-- wrap 끝 -->
+    <script>
+
+        function guideTab(){
+            $('.menu-list li').click(function(){
+                var activeTab01 = $(this).attr('data-tab');
+                $('.menu-list li, .menu-cont').removeClass('on');
+                $(this).addClass('on');
+                $('#' + activeTab01).addClass('on');
+            });
+        }
+
+        $(document).ready(function(){
+            guideTab();
+        });
+
+        $(window).on('load', function(){
+            
+        });
+
+    </script>
+    
+
+</body>
+</html>

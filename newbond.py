@@ -2,6 +2,7 @@ import streamlit as st
 import time
 import json
 import random
+import requests
 # 기존 함수들
 import pandas as pd
 import numpy as np 
@@ -16,6 +17,7 @@ import fredpy as fp
 from fredapi import Fred
 import yfinance as yf
 from openai import OpenAI
+import fredAll
 #config 파일
 import config
 #FAST API 이용하도록 변경
@@ -27,8 +29,8 @@ from fastapi.templating import Jinja2Templates
 app = FastAPI()
 
 # 정적 파일과 템플릿을 제공하기 위한 설정
-templates = Jinja2Templates(directory="myHtml")
-app.mount("/static", StaticFiles(directory="myHtml"), name="static")
+templates = Jinja2Templates(directory="chartHtml")
+app.mount("/static", StaticFiles(directory="chartHtml"), name="static")
 
 # Fred API KEY 설정
 fp.api_key =config.FRED_API_KEY
@@ -59,7 +61,7 @@ def create_interest_rate_chart():
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     # 초기 페이지 렌더링. plot_html 변수가 없으므로 비워둡니다.
-    return templates.TemplateResponse("index.html", {"request": request, "plot_html": None})
+    return templates.TemplateResponse("chart_pilot.html", {"request": request, "plot_html": None})
 
 
 @app.post("/submit", response_class=HTMLResponse)
@@ -67,7 +69,7 @@ async def submit(request: Request):
     plot_html = show_base_rate()
     interest_plot_html = create_interest_rate_chart()
     # 결과 페이지에 차트 HTML 포함하여 반환
-    return templates.TemplateResponse("index.html", {"request": request, "plot_html": plot_html, "interest_plot_html" :interest_plot_html})
+    return templates.TemplateResponse("chart_pilot.html", {"request": request, "plot_html": plot_html, "interest_plot_html" :interest_plot_html})
 
 def show_base_rate():
     start_date = '2000-01-01'
@@ -83,6 +85,37 @@ def show_base_rate():
     # Plotly 차트를 HTML로 변환
     plot_html = fig.to_html(full_html=False)
     return plot_html
+
+def finnhub_test():
+    finnhub_client = finnhub.Client(api_key=config.FINNHUB_KEY)
+    data = finnhub_client.bond_profile(isin='US912810TD00')
+    print(data)
+
+def fred_test():
+    data = fred.search_by_release(release_id=1, limit=0, order_by=None, filter="bonds")
+    print(data)    
+
+def rapidapi_test():
+    
+    url = "https://trader-calendar.p.rapidapi.com/api/calendar"
+
+    payload = { "country": "USA" }
+    headers = {
+	    "content-type": "application/json",
+	    "X-RapidAPI-Key": "361648d31fmshca1c7da5903ed29p1ff831jsn04a1574b4e09",
+	    "X-RapidAPI-Host": "trader-calendar.p.rapidapi.com"
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    print(response.json())
+
+#rapidapi_test()
+
+
+
+
+    
 
 #finnhub_client = finnhub.Client(api_key=st.secrets["FINNHUB_KEY"])
 #client = OpenAI(api_key = st.secrets["OPENAI_API_KEY"])
