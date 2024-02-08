@@ -13,7 +13,10 @@
     <link href="/static/assets/css/newFont.css" rel="stylesheet" type="text/css">
     <link href="/static/assets/css/common.css" rel="stylesheet" type="text/css">
     <link href="/static/assets/css/chart-pilot.css" rel="stylesheet" type="text/css" />
-
+    <!-- fullcalendar CDN -->  
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.css' rel='stylesheet' /> 
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/main.min.js'></script>  
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.8.0/locales-all.min.js'></script>
     <script type="text/javascript" src="/static/assets/js/jquery-3.6.4.min.js"></script>
     <script type="text/javascript" src="/static/assets/js/jquery-ui.min.js"></script>
     <script>
@@ -24,11 +27,68 @@
             document.getElementById('loadingIndicator').style.display = 'block';
             document.getElementById('rateForm').submit(); // 폼 제출            
         }
-        function goCalendar(){
-            //document.getElementById('loadingIndicator').style.display = 'block';
+       /** function goCalendar(){
             document.getElementById('calendarForm').submit(); // 폼 제출            
-        }        
-        </script>    
+        }      **/
+        async function goCalendar() {
+            document.getElementById('loadingIndicator2').style.display = 'block'; // 로딩 인디케이터 표시
+            // AJAX 요청을 통해 서버로부터 데이터 가져오기
+            const response = await fetch('/calendar', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+                // 필요한 경우 body 추가
+            });
+            const calendarData = await response.json(); // JSON 형태로 데이터 받기
+            document.getElementById('loadingIndicator2').style.display = 'none'; // 로딩 인디케이터 숨기기
+
+            console.log(calendarData);
+
+            // "start" 날짜가 "2024-01-01" 이후인 데이터만 필터링
+            const filteredData = calendarData.filter(event => new Date(event.start) >= new Date("2024-01-01"));
+
+            // FullCalendar 초기화 및 데이터 표시
+            var calendarEl = document.getElementById('calendar');
+            if (!calendarEl) {
+                // 달력 컨테이너가 아직 페이지에 없는 경우
+                alert('Calendar element not found on the page.');
+                return;
+            }
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: { left: 'prev,next today', center: 'title',  right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'},
+                timeZone: 'UTC',
+                expandRows: true, 
+                locale : "KO",
+                firstDay: 1,
+                navLinks: true, 
+                ihandleWindowResize : true,
+                windowResizeDelay : 100,
+                nowIndicator: true,
+                dayMaxEvents: true, // 이벤트가 오버되면 높이 제한 (+ 몇 개식으로 표현)
+                eventLimit: true, // 더 보기 버튼 활성화                                
+                events: filteredData.map(event => ({
+                    id: event.id.toString(),
+                    title: event.title,
+                    start: event.start,
+                    end: event.end,
+                    color: `#${event.hexColor}`, // 이벤트 색상 설정
+                    description: event.shortDesc // 이벤트 설명 추가
+                })),
+
+                eventContent: function(arg) { // 이벤트 내용 커스터마이징
+                    var element = document.createElement('div');
+                    element.innerHTML = `<b>${arg.event.title}</b><br>${arg.event.extendedProps.description}`;
+                    return { domNodes: [element] };
+                }
+            });
+            
+            calendar.render();
+        }
+
+    </script>          
 </head>
 <body>
     <form id="rateForm" action="/submit" method="post" style="display:none;">
@@ -112,27 +172,8 @@
                     <h2 class="s-tit">바보캘린더 3</h2>
                     <h3 class="s-tit">해당 그래프에 대한 추가 설명문구 영역 3</h3>
 
-                    <div class="chart-area">
-                        {% for event in calendar_data %}
-                        <div class="event" style="border-left: 5px solid #{{ event.hexColor }};">
-                            <div class="title">{{ event.title }}</div>
-                            <div class="details">
-                                <p>Time: {{ event.start }} - {{ event.end }}</p>
-                                <p>Country: {{ event.country }}, Category: {{ event.category }}, Importance: {{ event.importance }}</p>
-                                <p>{{ event.shortDesc }}</p>
-                                <p>{{ event.longDesc }}</p>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-
-
-                    <div class="box-instruction">
-                        <ul class="list-dep">
-                            <li>Chat GPT에서 제공한 답변 영역1</li>
-                            <li>Chat GPT에서 제공한 답변 영역2</li>
-                            <li>Chat GPT에서 제공한 답변 영역3</li>
-                        </ul>
+                    <div id="loadingIndicator2" style="display: none;">로딩 중...</div>
+                    <div id="calendar"></div>                        
                     </div>
                 </div>                
             </div>
@@ -146,23 +187,26 @@
 
         function guideTab(){
             $('.menu-list li').click(function(){
-                var activeTab01 = $(this).attr('data-tab');
-                $('.menu-list li, .menu-cont').removeClass('on');
-                $(this).addClass('on');
-                $('#' + activeTab01).addClass('on');
+                var activeTab = $(this).attr('data-tab');
+                window.location.hash = activeTab; // URL 해시를 변경
+                setActiveTab();
             });
         }
-
+        function setActiveTab() {
+            var activeTab = window.location.hash.replace('#', '');
+            if(activeTab) {
+                $('.menu-list li, .menu-cont').removeClass('on');
+                $('[data-tab="' + activeTab + '"]').addClass('on');
+                $('#' + activeTab).addClass('on');
+            }
+        }
         $(document).ready(function(){
             guideTab();
+            setActiveTab(); // 페이지 로딩 시 활성 탭 설정
         });
-
         $(window).on('load', function(){
             
         });
-
-    </script>
-    
-
-</body>
+  </script>
+  </body>
 </html>

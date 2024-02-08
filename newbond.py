@@ -4,6 +4,7 @@ import json
 import random
 import requests
 import httpx
+import asyncio
 # 기존 함수들
 import pandas as pd
 import numpy as np 
@@ -27,6 +28,7 @@ from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -97,27 +99,37 @@ def fred_test():
     data = fred.search_by_release(release_id=1, limit=0, order_by=None, filter="bonds")
     print(data)    
 
-@app.post("/calendar", response_class=HTMLResponse)
+'''@app.post("/calendar", response_class=HTMLResponse)
 async def get_calendar(request: Request):
     calendar_data = await rapidapi_test()
-    return templates.TemplateResponse("chart_pilot.html", {"request": request, "calendar_data": calendar_data})
+    return templates.TemplateResponse("chart_pilot.html", {"request": request, "calendar_data": calendar_data})'''
+
+@app.post("/calendar", response_class=JSONResponse)
+async def get_calendar(request: Request):
+    calendar_data = await rapidapi_test()
+    return JSONResponse(content=calendar_data)  # JSON 형식으로 데이터 반환
 
 
+                        
 async def rapidapi_test():
     url = "https://trader-calendar.p.rapidapi.com/api/calendar"
-    payload = { "country": "USA" }
+    payload = { "country": "USA", "start":"2023-12-01"}
     headers = {
 	    "content-type": "application/json",
 	    "X-RapidAPI-Key": "361648d31fmshca1c7da5903ed29p1ff831jsn04a1574b4e09",
 	    "X-RapidAPI-Host": "trader-calendar.p.rapidapi.com"
     }
-
+    
     async with httpx.AsyncClient() as client:
         response = await client.post(url, json=payload, headers=headers)
     calendar_data = response.json()
     return calendar_data
 
-#rapidapi_test()
+
+async def rapid():
+    calendar_data = await rapidapi_test()
+    print(calendar_data)
+#asyncio.run(rapid())
 
 
 
